@@ -15,26 +15,21 @@ import pyarrow.parquet as pq
 
 
 AIRFLOW_HOME = os.environ.get("AIRFLOW_HOME", "/opt/airflow")
-URL_PREFIX = 'https://s3.amazonaws.com/nyc-tlc/trip+data/' 
-FILE_NAME = 'yellow_tripdata_{{ dag_run.logical_date | previous_month }}.csv'
+URL_PREFIX = 'https://nyc-tlc.s3.amazonaws.com/trip+data/' 
+FILE_NAME = 'fhv_tripdata_{{ dag_run.logical_date | iso_month }}.csv'
 URL_FULL = URL_PREFIX + FILE_NAME
 TARGET_FOLDER = AIRFLOW_HOME + '/csv'
 TARGET_FILE = FILE_NAME
 TARGET_PARQUET = TARGET_FILE.replace('.csv', '.parquet')
-TABLE_NAME = 'yellow_taxi_{{ dag_run.logical_date | previous_month }}'
+TABLE_NAME = 'fhv_{{ dag_run.logical_date | iso_month }}'
 
 PROJECT_ID = os.environ.get("GCP_PROJECT_ID")
 BUCKET = os.environ.get("GCP_GCS_BUCKET")
 BIGQUERY_DATASET = os.environ.get("BIGQUERY_DATASET", 'trips_data_all')
 
-#dataset_file = "yellow_tripdata_2021-01.csv"
-#dataset_url = f"https://s3.amazonaws.com/nyc-tlc/trip+data/{dataset_file}"
-#path_to_local_home = os.environ.get("AIRFLOW_HOME", "/opt/airflow/")
-#parquet_file = dataset_file.replace('.csv', '.parquet')
 
-
-def previous_month(any_day):
-    return (any_day.replace(day=1) - timedelta(days=1)).strftime("%Y-%m")
+def iso_month(any_day):
+    return any_day.strftime("%Y-%m")
 
 def format_to_parquet(src_file):
     if not src_file.endswith('.csv'):
@@ -74,17 +69,17 @@ default_args = {
 
 # NOTE: DAG declaration - using a Context Manager (an implicit way)
 with DAG(
-    dag_id="yellow_tripdata_ingestion_gcs_dag",
-    description="Download monthly New York Taxi data and ingest it to BigQuery.",
-    schedule_interval="0 6 2 * *",
-    start_date=datetime(2019, 2, 1),
-    end_date=datetime(2021, 1, 1),
+    dag_id="fhv_ingestion_gcs_dag",
+    description="Download monthly New York For-Hire Vehicle Trip data and ingest it to BigQuery.",
+    schedule_interval="0 6 1 * *",
+    start_date=datetime(2019, 1, 1),
+    end_date=datetime(2020, 1, 1),
     max_active_runs=1,
     catchup=True,
     default_args=default_args,
     tags=['dtc-de'],
     user_defined_filters={
-        'previous_month': previous_month
+        'iso_month': iso_month
     }
 ) as dag:
 
@@ -111,7 +106,7 @@ with DAG(
 
     # TODO: Homework - research and try XCOM to communicate output values between 2 tasks/operators
     local_to_gcs_task = PythonOperator(
-        task_id="local_to_gcs",
+        task_id="local_to_gcs_task",
         python_callable=upload_to_gcs,
         op_kwargs={
             "bucket": BUCKET,
