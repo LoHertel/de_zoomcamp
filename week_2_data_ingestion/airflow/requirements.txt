@@ -1,5 +1,6 @@
 apache-airflow-providers-google
 apache-airflow-providers-docker
+plyvel
 pyarrow
 pandas 
 sqlalchemy 

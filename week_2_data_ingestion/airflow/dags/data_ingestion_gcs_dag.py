@@ -68,7 +68,7 @@ def upload_to_gcs(bucket, object_name, local_file):
 
 default_args = {
     "owner": "Lorenz",
-    "depends_on_past": True,
+    "depends_on_past": False,
     "retries": 1,
 }
 
@@ -76,9 +76,9 @@ default_args = {
 with DAG(
     dag_id="yellow_tripdata_ingestion_gcs_dag",
     description="Download monthly New York Taxi data and ingest it to BigQuery.",
-    schedule_interval="0 6 2 * *",
+    schedule_interval="0 6 1 * *",
     start_date=datetime(2019, 2, 1),
-    end_date=datetime(2021, 1, 1),
+    end_date=datetime(2021, 2, 1),
     max_active_runs=1,
     catchup=True,
     default_args=default_args,
@@ -90,8 +90,7 @@ with DAG(
 
     download_dataset_task = BashOperator(
         task_id="download_dataset",
-        #bash_command=f"curl -sS {dataset_url} > {path_to_local_home}/{dataset_file}"
-        bash_command=f'curl -sSLf -C - -o {TARGET_FOLDER}/{TARGET_FILE} --create-dirs {URL_FULL}'
+        bash_command=f'curl -sSLf -o {TARGET_FOLDER}/{TARGET_FILE} --create-dirs {URL_FULL}'
     )
 
     format_to_parquet_task = PythonOperator(
