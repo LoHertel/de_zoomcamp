@@ -1,0 +1,29 @@
+version: 2
+
+seeds:
+  - name: taxi_zone_lookup
+    description: >
+      Taxi Zones roughly based on NYC Department of City Planning's Neighborhood
+      Tabulation Areas (NTAs) and are meant to approximate neighborhoods, so you can see which
+      neighborhood a passenger was picked up in, and which neighborhood they were dropped off in. 
+      Includes associated service_zone (EWR, Boro Zone, Yellow Zone)
+    docs:
+      show: true
+    config:
+      enabled: true
+      column_types:
+        LocationID: numeric
+    columns:
+      - name: LocationID
+        description: ID which is used as an identifier for an pickup or dropoff location.
+        tests:
+          - unique:
+              severity: warn
+          - not_null:
+              severity: warn
+      - name: Borough
+        description: Six boroughs of New York or Unknown
+      - name: Zone
+        description: Zone inside a borough or Unknown
+      - name: service_zone
+        description: There are four service zones or N/A
