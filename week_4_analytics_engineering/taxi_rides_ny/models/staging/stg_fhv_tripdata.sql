@@ -13,8 +13,6 @@ select
 
 from {{ source('staging','fhv_tripdata') }}
 
-where length(dispatching_base_num) > 0
-
 -- dbt build --m <model.sql> --var 'is_test_run: false'
 {% if var('is_test_run', default=true) %}
 
