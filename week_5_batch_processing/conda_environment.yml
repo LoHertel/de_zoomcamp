@@ -1,0 +1,12 @@
+name: spark
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - openjdk=8.0.*
+  - pyspark
+  - findspark
+  - pandas
+  - numpy
+  - pyarrow
+  - ipykernel
