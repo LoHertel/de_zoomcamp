@@ -1,0 +1,24 @@
+{
+  "namespace": "hw6.salary",
+  "type": "record",
+  "name": "Salary",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    },
+    {
+      "name": "employee_id",
+      "type": "int"
+    },
+    {
+      "name": "amount",
+      "type": "float"
+    },
+    {
+      "name": "date",
+      "type": "int",
+      "logicalType": "date"
+    }
+  ]
+}

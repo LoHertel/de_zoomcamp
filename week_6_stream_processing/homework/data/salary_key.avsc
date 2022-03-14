@@ -1,0 +1,11 @@
+{
+  "namespace": "hw6.salary",
+  "type": "record",
+  "name": "Salary",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+name: kafka
+channels:
+  - conda-forge
+dependencies:
+  - python=3.7
+  - kafka-python
+  - python-confluent-kafka
+  - requests
+  - python-avro
+  - fastavro
+  - ipykernel
+  - pip:
+    - faust
